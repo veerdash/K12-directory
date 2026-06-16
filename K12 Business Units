@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K12 Business Units — Directory</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  [data-theme="light"] {
+    --bg: #ffffff;
+    --bg-card: #f7f7f5;
+    --bg-card-hover: #f0f0ed;
+    --bg-card-expanded: #fdf5f5;
+    --border: rgba(0,0,0,0.08);
+    --border-hover: rgba(0,0,0,0.14);
+    --border-expanded: rgba(234,33,37,0.30);
+    --text-primary: rgba(0,0,0,0.86);
+    --text-secondary: rgba(0,0,0,0.50);
+    --text-tertiary: rgba(0,0,0,0.34);
+    --red: #EA2125;
+    --chip-bg: rgba(0,0,0,0.04);
+    --divider: rgba(0,0,0,0.07);
+    --toggle-bg: #f0f0ed;
+    --toggle-knob: #ffffff;
+  }
+  [data-theme="dark"] {
+    --bg: #191919;
+    --bg-card: #212121;
+    --bg-card-hover: #272727;
+    --bg-card-expanded: #241e1e;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.16);
+    --border-expanded: rgba(234,33,37,0.32);
+    --text-primary: rgba(255,255,255,0.88);
+    --text-secondary: rgba(255,255,255,0.46);
+    --text-tertiary: rgba(255,255,255,0.28);
+    --red: #FF4B4F;
+    --chip-bg: rgba(255,255,255,0.06);
+    --divider: rgba(255,255,255,0.07);
+    --toggle-bg: #2e2e2e;
+    --toggle-knob: #191919;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    padding: 32px 24px 56px;
+    transition: background .25s, color .25s;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+  .sub { color: var(--text-secondary); font-size: 14px; margin-top: 6px; max-width: 560px; line-height: 1.5; }
+
+  .theme-toggle {
+    flex-shrink: 0; cursor: pointer; border: none; background: var(--toggle-bg);
+    width: 52px; height: 28px; border-radius: 999px; position: relative; transition: background .2s;
+  }
+  .theme-toggle::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--toggle-knob); transition: transform .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+  [data-theme="dark"] .theme-toggle::after { transform: translateX(24px); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 8px; }
+  .filter {
+    font: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+    padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-secondary); transition: all .15s;
+  }
+  .filter:hover { border-color: var(--border-hover); color: var(--text-primary); }
+  .filter.active { background: var(--red); border-color: var(--red); color: #fff; }
+
+  .count { font-size: 12px; color: var(--text-tertiary); margin: 14px 2px 18px; font-weight: 500; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } body { padding: 24px 16px 48px; } }
+
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 18px 16px; cursor: pointer; transition: all .18s; overflow: hidden;
+  }
+  .card:hover { background: var(--bg-card-hover); border-color: var(--border-hover); transform: translateY(-1px); }
+  .card.open { background: var(--bg-card-expanded); border-color: var(--border-expanded); }
+
+  .card-head { display: flex; align-items: center; gap: 12px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex;
+    align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #fff;
+  }
+  .card-title { font-size: 15px; font-weight: 600; line-height: 1.2; }
+  .card-tag { font-size: 11px; color: var(--text-tertiary); font-weight: 500; margin-top: 3px; text-transform: uppercase; letter-spacing: .04em; }
+  .chev { margin-left: auto; color: var(--text-tertiary); font-size: 12px; transition: transform .2s; }
+  .card.open .chev { transform: rotate(90deg); }
+
+  .desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-top: 12px; }
+
+  .detail { max-height: 0; opacity: 0; transition: max-height .25s ease, opacity .2s, margin .2s; }
+  .card.open .detail { max-height: 320px; opacity: 1; margin-top: 14px; }
+  .detail-inner { border-top: 1px solid var(--divider); padding-top: 12px; }
+  .row { display: flex; gap: 8px; font-size: 12.5px; margin-bottom: 7px; }
+  .row .k { color: var(--text-tertiary); min-width: 86px; font-weight: 500; }
+  .row .v { color: var(--text-primary); }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 6px; background: var(--chip-bg); color: var(--text-secondary); margin-right: 5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1>K12 Business Units</h1>
+      <div class="sub">The five units we report on — what each one does, who leads it, and where its weekly updates live. Tap a card for detail.</div>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+
+  <div class="filters" id="filters"></div>
+  <div class="count" id="count"></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const UNITS = [
+  { name: "Cialfo", group: "K12", color: "#2D6CDF", initials: "C",
+    desc: "World's leading AI-powered platform for high-school counselling for schools.",
+    lead: "Vanessa Hoo", focus: "SaaS · Renewals · VAS", reports: "Weekly Business Updates → Sales Pipeline" },
+  { name: "BridgeU", group: "K12", color: "#7A3FF2", initials: "BU",
+    desc: "A free-to-use careers & university guidance platform for K12 schools.",
+    lead: "Benji Evans", focus: "New sales · Renewals · Programme", reports: "BridgeU — Weekly Business Updates" },
+  { name: "Explore", group: "Growth", color: "#0FA36B", initials: "E",
+    desc: "AI-powered outreach connecting universities with the world's largest network of counsellors and students.",
+    lead: "—", focus: "University outreach · Direct Apply", reports: "Explore — Weekly Updates (Product / Marketing / Sales)" },
+  { name: "Kaaiser", group: "Growth", color: "#E08A1E", initials: "K",
+    desc: "India's trusted study-abroad gateway, placing students in top universities.",
+    lead: "Choy See, Loke", focus: "Study abroad · Placements", reports: "Weekly Business Update — Sales" },
+  { name: "Student Placements", group: "Growth", color: "#EA2125", initials: "SP",
+    desc: "Enrolments & VAS — the placements engine across enrolments and value-added services.",
+    lead: "Karan Nahar", focus: "Enrolments · VAS · Comet", reports: "Weekly Business Updates — Enrolments & Comet" },
+];
+const GROUPS = ["All", "K12", "Growth"];
+let active = "All";
+
+const grid = document.getElementById("grid");
+const filtersEl = document.getElementById("filters");
+const countEl = document.getElementById("count");
+
+GROUPS.forEach(g => {
+  const b = document.createElement("button");
+  b.className = "filter" + (g === "All" ? " active" : "");
+  b.textContent = g; b.onclick = () => { active = g; render(); };
+  filtersEl.appendChild(b);
+});
+
+function render() {
+  [...filtersEl.children].forEach(b => b.classList.toggle("active", b.textContent === active));
+  const list = UNITS.filter(u => active === "All" || u.group === active);
+  countEl.textContent = list.length + (list.length === 1 ? " unit" : " units");
+  grid.innerHTML = "";
+  list.forEach(u => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="logo" style="background:${u.color}">${u.initials}</div>
+        <div>
+          <div class="card-title">${u.name}</div>
+          <div class="card-tag">${u.group}</div>
+        </div>
+        <div class="chev">▶</div>
+      </div>
+      <div class="desc">${u.desc}</div>
+      <div class="detail"><div class="detail-inner">
+        <div class="row"><span class="k">Reporting lead</span><span class="v">${u.lead}</span></div>
+        <div class="row"><span class="k">Focus</span><span class="v">${u.focus.split(" · ").map(f=>`<span class="pill">${f}</span>`).join("")}</span></div>
+        <div class="row"><span class="k">Updates in</span><span class="v">${u.reports}</span></div>
+      </div></div>`;
+    card.onclick = () => card.classList.toggle("open");
+    grid.appendChild(card);
+  });
+}
+document.getElementById("themeToggle").onclick = () => {
+  const h = document.documentElement;
+  h.setAttribute("data-theme", h.getAttribute("data-theme") === "dark" ? "light" : "dark");
+};
+render();
+</script>
+</body>
+</html>
