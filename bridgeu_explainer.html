@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K12 BridgeU — How We Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #D4537E;
+    --brand-dark: #72243E;
+    --brand-light: #FBEAF0;
+    --brand-mid: #ED93B1;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --faint: #fdf4f7;
+    --border: rgba(212,83,126,0.15);
+    --white: #ffffff;
+    --green: #0F6E56;
+    --green-bg: #E1F5EE;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --red: #A32D2D;
+    --red-bg: #FCEBEB;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--white);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    padding: 28px 24px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1.5px solid var(--brand-light);
+  }
+  .brand-badge {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 13px; letter-spacing: -.5px;
+    flex-shrink: 0;
+  }
+  .header-text h1 {
+    font-size: 20px; font-weight: 600; letter-spacing: -.3px; color: var(--text);
+    line-height: 1.2;
+  }
+  .header-text p {
+    font-size: 13px; color: var(--muted); margin-top: 2px;
+  }
+  .cadence-pill {
+    margin-left: auto; flex-shrink: 0;
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .notice {
+    background: var(--faint);
+    border-left: 3px solid var(--brand);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 16px;
+    font-size: 13px; color: var(--muted);
+    margin-bottom: 20px; line-height: 1.5;
+  }
+  .notice strong { color: var(--text); }
+
+  .section-label {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .1em; color: var(--brand);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+
+  .functions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .fn-card {
+    background: var(--faint);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s, transform .12s;
+    position: relative;
+  }
+  .fn-card:hover { background: var(--brand-light); border-color: var(--brand-mid); transform: translateY(-1px); }
+  .fn-card.active { background: var(--brand-light); border-color: var(--brand); }
+  .fn-card.active .fn-dot { background: var(--brand); }
+  .fn-icon { font-size: 20px; margin-bottom: 6px; }
+  .fn-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .fn-lead { font-size: 11px; color: var(--muted); }
+  .fn-dot {
+    position: absolute; top: 10px; right: 10px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #d1d5db;
+    transition: background .15s;
+  }
+
+  .detail-panel {
+    background: var(--brand-light);
+    border: 1px solid var(--brand-mid);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    min-height: 110px;
+    transition: opacity .2s;
+  }
+  .detail-panel h3 {
+    font-size: 15px; font-weight: 600; color: var(--brand-dark);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .detail-item .dk { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 2px; }
+  .detail-item .dv { font-size: 13px; color: var(--text); }
+
+  .flow-section { margin-bottom: 24px; }
+  .flow-steps {
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto; padding-bottom: 4px;
+  }
+  .flow-step {
+    flex-shrink: 0;
+    background: var(--faint);
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius);
+    padding: 11px 16px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-step .fs-icon { font-size: 18px; margin-bottom: 4px; }
+  .flow-step .fs-label { font-size: 11px; font-weight: 600; color: var(--text); }
+  .flow-step .fs-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .flow-arrow {
+    flex-shrink: 0; color: var(--brand); font-size: 16px;
+    padding: 0 6px; opacity: .6;
+  }
+  .flow-step.highlight { background: var(--brand-light); border-color: var(--brand-mid); }
+
+  .notes-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 24px;
+  }
+  .note-card {
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 12px; line-height: 1.5;
+  }
+  .note-card.warn { background: var(--amber-bg); color: var(--amber); }
+  .note-card.info { background: var(--brand-light); color: var(--brand-dark); }
+  .note-card.good { background: var(--green-bg); color: var(--green); }
+  .note-card.alert { background: var(--red-bg); color: var(--red); }
+  .note-card strong { font-weight: 600; display: block; margin-bottom: 3px; }
+
+  .pillars {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 8px;
+  }
+  .pillar {
+    background: var(--faint); border-radius: var(--radius);
+    padding: 12px 10px; text-align: center;
+  }
+  .pillar .pi { font-size: 20px; margin-bottom: 5px; }
+  .pillar .pl { font-size: 11px; font-weight: 600; color: var(--text); }
+  .pillar .ps { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .footer {
+    border-top: 1px solid var(--brand-light);
+    padding-top: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .footer-item { font-size: 11px; color: var(--muted); }
+  .footer-item strong { color: var(--text); }
+
+  @media (max-width: 600px) {
+    .functions-grid { grid-template-columns: repeat(2,1fr); }
+    .detail-grid { grid-template-columns: 1fr 1fr; }
+    .notes-grid { grid-template-columns: 1fr; }
+    .pillars { grid-template-columns: repeat(2,1fr); }
+    .cadence-pill { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand-badge">BU</div>
+  <div class="header-text">
+    <h1>K12 BridgeU — How We Report</h1>
+    <p>Weekly business update structure · Sources · Cadence · POCs</p>
+  </div>
+  <div class="cadence-pill">📅 Weekly cadence</div>
+</div>
+
+<div class="notice">
+  ℹ️ The K12 BridgeU Teamspace follows <strong>the same weekly update structure as K12 Cialfo</strong>. The process is nearly identical — however the Reporting Lead and Reports POC may differ per function. Refer to the BridgeU section of K12 Teamspace 2026 for the exact toggle structure.
+</div>
+
+<div class="section-label">6 Functions — click to explore</div>
+<div class="functions-grid" id="fnGrid"></div>
+<div class="detail-panel" id="detailPanel">
+  <h3>📌 Select a function above to see its details</h3>
+  <p style="font-size:13px; color:var(--muted);">Click any function card to view its reporting lead, cadence, data source, and any special notes.</p>
+</div>
+
+<div class="flow-section">
+  <div class="section-label">Update workflow — same process as Cialfo</div>
+  <div class="flow-steps">
+    <div class="flow-step highlight"><div class="fs-icon">📥</div><div class="fs-label">Source collects</div><div class="fs-sub">Teams · Notion · Links</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="fs-icon">✍️</div><div class="fs-label">POC formats</div><div class="fs-sub">Standard template</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step highlight"><div class="fs-icon">📂</div><div class="fs-label">Added to toggle</div><div class="fs-sub">BridgeU section</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="fs-icon">🔄</div><div class="fs-label">Central reporting</div><div class="fs-sub">Propagated out</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step highlight"><div class="fs-icon">✅</div><div class="fs-label">Tracker updated</div><div class="fs-sub">Status → Received</div></div>
+  </div>
+</div>
+
+<div class="section-label">Special notes</div>
+<div class="notes-grid">
+  <div class="note-card info"><strong>🔁 Same structure as Cialfo</strong>The weekly update format, toggle structure, and 4-pillar template are identical to K12 Cialfo. Only POCs differ.</div>
+  <div class="note-card warn"><strong>⏰ Engineering cadence</strong>Due Wednesday EOD. Reporting Lead: Rajveer Singh (same as Cialfo engineering).</div>
+  <div class="note-card good"><strong>📎 BridgeU-specific data</strong>BU K12 Report, Common App API Integration, UCAS data, BU PSHE — these are BridgeU-specific product tracks.</div>
+  <div class="note-card alert"><strong>🔗 POC source</strong>Refer to BridgeU Data Source and POC toggle in the BridgeU section of K12 Teamspace 2026 for current contacts.</div>
+</div>
+
+<div class="section-label">4 pillars — every update covers these</div>
+<div class="pillars">
+  <div class="pillar"><div class="pi">📌</div><div class="pl">What was done</div><div class="ps">Actions completed</div></div>
+  <div class="pillar"><div class="pi">💡</div><div class="pl">Insight & outcome</div><div class="ps">What it means</div></div>
+  <div class="pillar"><div class="pi">⚠️</div><div class="pl">Challenges</div><div class="ps">Blockers & risks</div></div>
+  <div class="pillar"><div class="pi">➡️</div><div class="pl">Next steps</div><div class="ps">Planned actions</div></div>
+</div>
+
+<div style="height:16px"></div>
+<div class="footer">
+  <div class="footer-item">📍 Teamspace: <strong>K12 Teamspace 2026 · BridgeU section</strong></div>
+  <div class="footer-item">📋 SOP: <strong>Standard Weekly Update Workflow (Section 3)</strong></div>
+  <div class="footer-item">👥 POC data: <strong>BridgeU Data Source and POC toggle</strong></div>
+</div>
+
+<script>
+const fns = [
+  { icon:"💰", name:"Sales Pipeline", lead:"Benji Evans", cadence:"Monday EOD", source:"Personally shared links + Notion", note:"New sales, renewals, VAS. Includes weekly PDF + HTML analysis. Key accounts: AIS Kuwait, Beijing Baiyi, ASU.", status:"🟢" },
+  { icon:"📣", name:"Marketing & Pipeline", lead:"Simran Singh", cadence:"Monday EOD", source:"Teams channel + Notion", note:"BridgeU Programme, LATAM campaign, ManageBac × Faria (BU & CAF), Connect newsletter.", status:"🟢" },
+  { icon:"⚙️", name:"Engineering", lead:"Rajveer Singh", cadence:"Wednesday EOD", source:"Engineering Weekly Updates page", note:"Cadence is Wednesday. Engineering Lead: Muhammad Talha Javed. Covers BU-specific engineering updates.", status:"🟡" },
+  { icon:"🛠", name:"Central Ops", lead:"Mohit Mmangal", cadence:"Tuesday EOD", source:"Direct from Mohit", note:"Covers BU ops, provisioning, AR. Prompt if missing by Tuesday.", status:"🟡" },
+  { icon:"👥", name:"Talent", lead:"Tenille Jay", cadence:"Monday EOD", source:"Talent team update", note:"Covers BridgeU hiring pipeline and open roles.", status:"🟢" },
+  { icon:"💡", name:"Product", lead:"Dhruv Kumar Pandey", cadence:"Monday EOD", source:"Product Notion + PM", note:"PM: Bilal Ibrahim. Covers BU Student Optimisation, Advisor Optimisation, Common App API, UCAS, BU PSHE, Email Cleanup.", status:"🟢" },
+];
+
+const grid = document.getElementById("fnGrid");
+const panel = document.getElementById("detailPanel");
+
+fns.forEach((f) => {
+  const c = document.createElement("div");
+  c.className = "fn-card";
+  c.innerHTML = `<div class="fn-icon">${f.icon}</div><div class="fn-name">${f.name}</div><div class="fn-lead">${f.lead.split('/')[0].trim()}</div><div class="fn-dot"></div>`;
+  c.onclick = () => {
+    document.querySelectorAll(".fn-card").forEach(x => x.classList.remove("active"));
+    c.classList.add("active");
+    panel.innerHTML = `<h3>${f.icon} ${f.name}</h3><div class="detail-grid">
+      <div class="detail-item"><div class="dk">Reporting lead</div><div class="dv">${f.lead}</div></div>
+      <div class="detail-item"><div class="dk">Due</div><div class="dv">${f.cadence}</div></div>
+      <div class="detail-item"><div class="dk">Data source</div><div class="dv">${f.source}</div></div>
+      <div class="detail-item" style="grid-column:1/-1"><div class="dk">Notes</div><div class="dv">${f.note}</div></div>
+    </div>`;
+  };
+  grid.appendChild(c);
+});
+</script>
+</body>
+</html>
